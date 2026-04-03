@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import WorkoutView from "./pages/WorkoutView";
+import ExerciseLibrary from "./pages/ExerciseLibrary";
 import AIChat from "./pages/AIChat";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
@@ -28,7 +29,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/workout/:id" element={<WorkoutView />} />
+          <Route path="/workout/:id" element={<WorkoutView />} />
+          <Route path="/exercises" element={<ExerciseLibrary />} />
             <Route path="/chat" element={<AIChat />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/settings" element={<Settings />} />
