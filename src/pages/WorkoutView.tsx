@@ -1,7 +1,7 @@
 import { BottomNav } from "@/components/BottomNav";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, Flame, Dumbbell } from "lucide-react";
-import { ExerciseCard } from "@/components/ExerciseCard";
+import { ExerciseCard, type ExerciseData } from "@/components/ExerciseCard";
 import { useQuery } from "@tanstack/react-query";
 import { externalSupabase } from "@/integrations/supabase/external-client";
 
@@ -66,6 +66,19 @@ const WorkoutView = () => {
     },
   });
 
+  const mappedExercises: ExerciseData[] = (exercises || []).map((ex) => {
+    const config = defaultSets[ex.muscle] || { sets: 3, reps: "10", rest: "60 ثانية" };
+    return {
+      name: ex.name,
+      gifUrl: ex.gif_url,
+      muscle: ex.muscle,
+      type: ex.type,
+      sets: config.sets,
+      reps: config.reps,
+      rest: config.rest,
+    };
+  });
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -78,32 +91,23 @@ const WorkoutView = () => {
         <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{plan.duration}</span>
           <span className="flex items-center gap-1"><Flame className="w-4 h-4" />{plan.calories} سعرة</span>
-          <span className="flex items-center gap-1"><Dumbbell className="w-4 h-4" />{exercises?.length || 0} تمارين</span>
+          <span className="flex items-center gap-1"><Dumbbell className="w-4 h-4" />{mappedExercises.length} تمارين</span>
         </div>
       </div>
 
       {/* Exercises */}
-      <div className="px-4 space-y-3">
+      <div className="px-4 space-y-4">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-card border border-border rounded-xl p-4 h-24 animate-pulse" />
+            <div key={i} className="bg-card border border-border rounded-2xl p-4 h-32 animate-pulse" />
           ))
-        ) : exercises?.map((ex, i) => {
-          const config = defaultSets[ex.muscle] || { sets: 3, reps: "10", rest: "60 ثانية" };
-          return (
-            <ExerciseCard
-              key={ex.id}
-              exercise={{
-                name: ex.name,
-                sets: config.sets,
-                reps: config.reps,
-                rest: config.rest,
-                gifUrl: ex.gif_url,
-              }}
-              index={i}
-            />
-          );
-        })}
+        ) : mappedExercises.map((ex, i) => (
+          <ExerciseCard
+            key={i}
+            exercise={ex}
+            index={i}
+          />
+        ))}
       </div>
 
       <BottomNav />
