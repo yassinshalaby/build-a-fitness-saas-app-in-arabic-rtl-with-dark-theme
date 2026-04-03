@@ -29,7 +29,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/workout/:id" element={<WorkoutView />} />
+          <Route path="/workout/:id" element={<WorkoutView />} />
+          <Route path="/exercises" element={<ExerciseLibrary />} />
             <Route path="/chat" element={<AIChat />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/settings" element={<Settings />} />
