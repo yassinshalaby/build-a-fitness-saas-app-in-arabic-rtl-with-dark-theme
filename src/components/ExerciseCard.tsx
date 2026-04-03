@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Dumbbell } from "lucide-react";
 
 interface Exercise {
   name: string;
   sets: number;
   reps: string;
   rest: string;
+  gifUrl?: string;
 }
 
 export const ExerciseCard = ({ exercise, index }: { exercise: Exercise; index: number }) => {
@@ -18,20 +19,37 @@ export const ExerciseCard = ({ exercise, index }: { exercise: Exercise; index: n
       }`}
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h3 className={`font-semibold text-lg ${completed ? "text-success" : "text-foreground"}`}>
+      <div className="flex items-start gap-3">
+        {/* GIF */}
+        {exercise.gifUrl ? (
+          <img
+            src={exercise.gifUrl}
+            alt={exercise.name}
+            className="w-20 h-20 rounded-lg object-cover bg-secondary shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+            <Dumbbell className="w-8 h-8 text-muted-foreground" />
+          </div>
+        )}
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-semibold text-base ${completed ? "text-success" : "text-foreground"}`}>
             {exercise.name}
           </h3>
-          <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
+          <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
             <span>{exercise.sets} مجموعات</span>
             <span>{exercise.reps} تكرار</span>
             <span>راحة: {exercise.rest}</span>
           </div>
         </div>
+
+        {/* Complete button */}
         <button
           onClick={() => setCompleted(!completed)}
-          className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+          className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all shrink-0 ${
             completed
               ? "border-success bg-success text-success-foreground"
               : "border-border hover:border-primary text-muted-foreground"
