@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, Flame, Dumbbell } from "lucide-react";
 import { ExerciseCard, type ExerciseData } from "@/components/ExerciseCard";
+import { RestTimer } from "@/components/RestTimer";
 import { useQuery } from "@tanstack/react-query";
 import { externalSupabase } from "@/integrations/supabase/external-client";
 
@@ -30,22 +32,26 @@ const workoutPlans: Record<string, WorkoutPlan> = {
   },
 };
 
-const defaultSets: Record<string, { sets: number; reps: string; rest: string }> = {
-  "Chest": { sets: 4, reps: "10-12", rest: "90 ثانية" },
-  "Arms (Triceps)": { sets: 3, reps: "12", rest: "60 ثانية" },
-  "Arms (Biceps)": { sets: 3, reps: "12", rest: "60 ثانية" },
-  "Core": { sets: 3, reps: "15-20", rest: "45 ثانية" },
-  "Legs (Glutes)": { sets: 4, reps: "10", rest: "60 ثانية" },
-  "Legs (Quads)": { sets: 4, reps: "10", rest: "90 ثانية" },
-  "Shoulders": { sets: 3, reps: "12", rest: "60 ثانية" },
-  "Back (Lats)": { sets: 4, reps: "10", rest: "90 ثانية" },
-  "Back (Traps)": { sets: 3, reps: "12", rest: "60 ثانية" },
+const defaultSets: Record<string, { sets: number; reps: string; rest: string; restSeconds: number }> = {
+  "Chest": { sets: 4, reps: "10-12", rest: "90 ثانية", restSeconds: 90 },
+  "Arms (Triceps)": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
+  "Arms (Biceps)": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
+  "Core": { sets: 3, reps: "15-20", rest: "45 ثانية", restSeconds: 45 },
+  "Legs (Glutes)": { sets: 4, reps: "10", rest: "60 ثانية", restSeconds: 60 },
+  "Legs (Quads)": { sets: 4, reps: "10", rest: "90 ثانية", restSeconds: 90 },
+  "Shoulders": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
+  "Back (Lats)": { sets: 4, reps: "10", rest: "90 ثانية", restSeconds: 90 },
+  "Back (Traps)": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
 };
 
 const WorkoutView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const plan = workoutPlans[id || "1"] || workoutPlans["1"];
+  const [restState, setRestState] = useState<{
+    exerciseIndex: number;
+    duration: number;
+  } | null>(null);
 
   const { data: exercises, isLoading } = useQuery({
     queryKey: ["workout-exercises", id],
@@ -67,7 +73,7 @@ const WorkoutView = () => {
   });
 
   const mappedExercises: ExerciseData[] = (exercises || []).map((ex) => {
-    const config = defaultSets[ex.muscle] || { sets: 3, reps: "10", rest: "60 ثانية" };
+    const config = defaultSets[ex.muscle] || { sets: 3, reps: "10", rest: "60 ثانية", restSeconds: 60 };
     return {
       name: ex.name,
       gifUrl: ex.gif_url,
@@ -78,6 +84,31 @@ const WorkoutView = () => {
       rest: config.rest,
     };
   });
+
+  const handleSetDone = (exerciseIndex: number) => {
+    const ex = mappedExercises[exerciseIndex];
+    const config = defaultSets[ex.muscle] || { restSeconds: 60 };
+    setRestState({ exerciseIndex, duration: config.restSeconds });
+  };
+
+  const handleRestComplete = () => {
+    setRestState(null);
+  };
+
+  // Show rest timer overlay
+  if (restState !== null) {
+    const currentEx = mappedExercises[restState.exerciseIndex];
+    const nextEx = mappedExercises[restState.exerciseIndex + 1];
+    return (
+      <RestTimer
+        durationSeconds={restState.duration}
+        currentExercise={currentEx}
+        nextExercise={nextEx}
+        onComplete={handleRestComplete}
+        onSkip={handleRestComplete}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -106,6 +137,8 @@ const WorkoutView = () => {
             key={i}
             exercise={ex}
             index={i}
+            onDone={() => handleSetDone(i)}
+            onSkip={() => {}}
           />
         ))}
       </div>
