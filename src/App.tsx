@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import WorkoutView from "./pages/WorkoutView";
+import ExerciseLibrary from "./pages/ExerciseLibrary";
 import AIChat from "./pages/AIChat";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
