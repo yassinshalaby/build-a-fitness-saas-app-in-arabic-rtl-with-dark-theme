@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exercises: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          id: string
+          name: string
+          reps: string | null
+          rest_seconds: string | null
+          sets: number | null
+          sort_order: number | null
+          user_id: string
+          workout_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          name: string
+          reps?: string | null
+          rest_seconds?: string | null
+          sets?: number | null
+          sort_order?: number | null
+          user_id: string
+          workout_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          name?: string
+          reps?: string | null
+          rest_seconds?: string | null
+          sets?: number | null
+          sort_order?: number | null
+          user_id?: string
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_answers: {
+        Row: {
+          created_at: string
+          frequency: string | null
+          goal: string | null
+          id: string
+          level: string | null
+          preferred_type: string | null
+          user_id: string
+          weight_range: string | null
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string | null
+          goal?: string | null
+          id?: string
+          level?: string | null
+          preferred_type?: string | null
+          user_id: string
+          weight_range?: string | null
+        }
+        Update: {
+          created_at?: string
+          frequency?: string | null
+          goal?: string | null
+          id?: string
+          level?: string | null
+          preferred_type?: string | null
+          user_id?: string
+          weight_range?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          goal: string | null
+          height_cm: number | null
+          id: string
+          level: string | null
+          updated_at: string
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          goal?: string | null
+          height_cm?: number | null
+          id?: string
+          level?: string | null
+          updated_at?: string
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          goal?: string | null
+          height_cm?: number | null
+          id?: string
+          level?: string | null
+          updated_at?: string
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      workouts: {
+        Row: {
+          calories: number | null
+          completed: boolean | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          scheduled_date: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          completed?: boolean | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          scheduled_date?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          completed?: boolean | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          scheduled_date?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
