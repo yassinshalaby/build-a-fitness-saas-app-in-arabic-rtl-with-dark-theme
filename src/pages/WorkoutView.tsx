@@ -24,10 +24,24 @@ const workoutPlans: Record<string, WorkoutPlan> = {
     limit: 6,
   },
   "2": {
-    title: "تمرين الكارديو والبطن",
-    duration: "30 دقيقة",
-    calories: 250,
-    muscles: ["Core", "Legs (Glutes)"],
+    title: "تمرين الظهر والباي",
+    duration: "45 دقيقة",
+    calories: 300,
+    muscles: ["Back (Lats)", "Arms (Biceps)"],
+    limit: 6,
+  },
+  "3": {
+    title: "تمرين الأكتاف والبطن",
+    duration: "40 دقيقة",
+    calories: 280,
+    muscles: ["Shoulders", "Core"],
+    limit: 6,
+  },
+  "4": {
+    title: "تمرين الأرجل",
+    duration: "50 دقيقة",
+    calories: 400,
+    muscles: ["Legs (Quads)", "Legs (Glutes)", "Legs (Calves)"],
     limit: 6,
   },
 };
@@ -39,6 +53,7 @@ const defaultSets: Record<string, { sets: number; reps: string; rest: string; re
   "Core": { sets: 3, reps: "15-20", rest: "45 ثانية", restSeconds: 45 },
   "Legs (Glutes)": { sets: 4, reps: "10", rest: "60 ثانية", restSeconds: 60 },
   "Legs (Quads)": { sets: 4, reps: "10", rest: "90 ثانية", restSeconds: 90 },
+  "Legs (Calves)": { sets: 4, reps: "15", rest: "60 ثانية", restSeconds: 60 },
   "Shoulders": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
   "Back (Lats)": { sets: 4, reps: "10", rest: "90 ثانية", restSeconds: 90 },
   "Back (Traps)": { sets: 3, reps: "12", rest: "60 ثانية", restSeconds: 60 },
@@ -95,7 +110,6 @@ const WorkoutView = () => {
     setRestState(null);
   };
 
-  // Show rest timer overlay
   if (restState !== null) {
     const currentEx = mappedExercises[restState.exerciseIndex];
     const nextEx = mappedExercises[restState.exerciseIndex + 1];
@@ -112,7 +126,6 @@ const WorkoutView = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
       <div className="p-6 pt-12">
         <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-2">
           <ArrowRight className="w-5 h-5" />
@@ -126,7 +139,6 @@ const WorkoutView = () => {
         </div>
       </div>
 
-      {/* Exercises */}
       <div className="px-4 space-y-4">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (

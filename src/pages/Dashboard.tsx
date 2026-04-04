@@ -1,11 +1,19 @@
 import { BottomNav } from "@/components/BottomNav";
 import { Flame, Dumbbell, Clock, TrendingUp, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { externalSupabase } from "@/integrations/supabase/external-client";
 
-const todayWorkouts = [
-  { id: 1, title: "تمرين الصدر والترايسبس", duration: "45 دقيقة", exercises: 6, calories: 320 },
-  { id: 2, title: "تمرين الكارديو", duration: "30 دقيقة", exercises: 4, calories: 250 },
-];
+const muscleTranslations: Record<string, string> = {
+  "Chest": "صدر",
+  "Back (Lats)": "ظهر",
+  "Shoulders": "أكتاف",
+  "Arms (Biceps)": "باي",
+  "Arms (Triceps)": "تراي",
+  "Legs (Quads)": "أرجل",
+  "Legs (Glutes)": "مؤخرة",
+  "Core": "بطن",
+};
 
 const stats = [
   { icon: Flame, label: "سعرات محروقة", value: "1,240", color: "text-primary" },
@@ -14,8 +22,85 @@ const stats = [
   { icon: TrendingUp, label: "الأسبوع", value: "+12%", color: "text-primary" },
 ];
 
+interface WorkoutGroup {
+  id: string;
+  title: string;
+  muscles: string[];
+  count: number;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const { data: workoutGroups, isLoading } = useQuery({
+    queryKey: ["dashboard-workouts"],
+    queryFn: async () => {
+      const { data, error } = await externalSupabase
+        .from("saas_workouts")
+        .select("muscle, type")
+        .limit(500);
+      if (error) throw error;
+
+      // Group by muscle to create workout cards
+      const muscleMap = new Map<string, { count: number; types: Set<string> }>();
+      for (const ex of data || []) {
+        const entry = muscleMap.get(ex.muscle) || { count: 0, types: new Set<string>() };
+        entry.count++;
+        if (ex.type) entry.types.add(ex.type);
+        muscleMap.set(ex.muscle, entry);
+      }
+
+      const groups: WorkoutGroup[] = [];
+      // Create paired workout groups
+      const muscles = Array.from(muscleMap.keys());
+      const chestIdx = muscles.indexOf("Chest");
+      const tricepsIdx = muscles.indexOf("Arms (Triceps)");
+      
+      if (chestIdx !== -1 && tricepsIdx !== -1) {
+        groups.push({
+          id: "1",
+          title: "تمرين الصدر والترايسبس",
+          muscles: ["Chest", "Arms (Triceps)"],
+          count: (muscleMap.get("Chest")?.count || 0) + (muscleMap.get("Arms (Triceps)")?.count || 0),
+        });
+      }
+
+      const backIdx = muscles.indexOf("Back (Lats)");
+      const bicepsIdx = muscles.indexOf("Arms (Biceps)");
+      if (backIdx !== -1 && bicepsIdx !== -1) {
+        groups.push({
+          id: "2",
+          title: "تمرين الظهر والباي",
+          muscles: ["Back (Lats)", "Arms (Biceps)"],
+          count: (muscleMap.get("Back (Lats)")?.count || 0) + (muscleMap.get("Arms (Biceps)")?.count || 0),
+        });
+      }
+
+      const shouldersIdx = muscles.indexOf("Shoulders");
+      const coreIdx = muscles.indexOf("Core");
+      if (shouldersIdx !== -1 || coreIdx !== -1) {
+        groups.push({
+          id: "3",
+          title: "تمرين الأكتاف والبطن",
+          muscles: ["Shoulders", "Core"].filter(m => muscles.includes(m)),
+          count: (muscleMap.get("Shoulders")?.count || 0) + (muscleMap.get("Core")?.count || 0),
+        });
+      }
+
+      const legsExist = muscles.some(m => m.startsWith("Legs"));
+      if (legsExist) {
+        const legMuscles = muscles.filter(m => m.startsWith("Legs"));
+        groups.push({
+          id: "4",
+          title: "تمرين الأرجل",
+          muscles: legMuscles,
+          count: legMuscles.reduce((sum, m) => sum + (muscleMap.get(m)?.count || 0), 0),
+        });
+      }
+
+      return groups;
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -42,7 +127,11 @@ const Dashboard = () => {
       <div className="px-4 mt-8">
         <h2 className="text-lg font-semibold text-foreground mb-4">تمارين اليوم</h2>
         <div className="space-y-3">
-          {todayWorkouts.map((w) => (
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-card border border-border rounded-xl p-4 h-20 animate-pulse" />
+            ))
+          ) : workoutGroups?.map((w) => (
             <button
               key={w.id}
               onClick={() => navigate(`/workout/${w.id}`)}
@@ -50,10 +139,13 @@ const Dashboard = () => {
             >
               <div className="flex-1">
                 <h3 className="font-semibold text-foreground">{w.title}</h3>
-                <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                  <span>{w.duration}</span>
-                  <span>{w.exercises} تمارين</span>
-                  <span>{w.calories} سعرة</span>
+                <div className="flex gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+                  {w.muscles.map(m => (
+                    <span key={m} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                      {muscleTranslations[m] || m}
+                    </span>
+                  ))}
+                  <span>{w.count} تمرين متاح</span>
                 </div>
               </div>
               <ChevronLeft className="w-5 h-5 text-muted-foreground" />
@@ -62,7 +154,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Weekly Chart Placeholder */}
+      {/* Weekly Chart */}
       <div className="px-4 mt-8">
         <h2 className="text-lg font-semibold text-foreground mb-4">نشاطك هذا الأسبوع</h2>
         <div className="bg-card border border-border rounded-xl p-4">
