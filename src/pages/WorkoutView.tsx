@@ -60,7 +60,7 @@ const WorkoutView = () => {
       const results = await Promise.all(
         plan.muscles.map(async (muscle) => {
           const { data, error } = await externalSupabase
-            .from("exercises")
+            .from("saas_workouts")
             .select("id, name, gif_url, muscle, type")
             .eq("muscle", muscle)
             .limit(perMuscle);

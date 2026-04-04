@@ -28,7 +28,7 @@ export const useExerciseMuscles = () => {
     queryKey: ["exercise-muscles"],
     queryFn: async () => {
       const { data, error } = await externalSupabase
-        .from("exercises")
+        .from("saas_workouts")
         .select("muscle")
         .limit(1000);
       if (error) throw error;
