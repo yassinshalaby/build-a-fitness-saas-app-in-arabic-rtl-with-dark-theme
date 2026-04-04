@@ -105,14 +105,26 @@ const ExerciseLibrary = () => {
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 {exercise.gif_url ? (
-                  <img
-                    src={exercise.gif_url}
-                    alt={exercise.name}
-                    className="w-16 h-16 rounded-lg object-cover bg-secondary"
-                    loading="lazy"
-                  />
+                  exercise.gif_url.endsWith(".mp4") ? (
+                    <video
+                      src={exercise.gif_url}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-16 h-16 rounded-lg object-cover bg-secondary shrink-0"
+                    />
+                  ) : (
+                    <img
+                      src={exercise.gif_url}
+                      alt={exercise.name}
+                      className="w-16 h-16 rounded-lg object-cover bg-secondary shrink-0"
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  )
                 ) : (
-                  <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0">
                     <Dumbbell className="w-6 h-6 text-muted-foreground" />
                   </div>
                 )}
