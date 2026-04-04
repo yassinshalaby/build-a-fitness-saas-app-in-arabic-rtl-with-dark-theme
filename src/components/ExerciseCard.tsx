@@ -54,12 +54,24 @@ export const ExerciseCard = ({ exercise, index, onDone, onSkip }: ExerciseCardPr
       {/* Top: GIF + Name + Badge */}
       <div className="flex gap-4 p-4">
         {exercise.gifUrl ? (
-          <img
-            src={exercise.gifUrl}
-            alt={exercise.name}
-            className="w-24 h-24 rounded-xl object-cover bg-secondary shrink-0"
-            loading="lazy"
-          />
+          exercise.gifUrl.endsWith(".mp4") ? (
+            <video
+              src={exercise.gifUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-24 h-24 rounded-xl object-cover bg-secondary shrink-0"
+            />
+          ) : (
+            <img
+              src={exercise.gifUrl}
+              alt={exercise.name}
+              className="w-24 h-24 rounded-xl object-cover bg-secondary shrink-0"
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          )
         ) : (
           <div className="w-24 h-24 rounded-xl bg-secondary flex items-center justify-center shrink-0">
             <Dumbbell className="w-10 h-10 text-muted-foreground" />
