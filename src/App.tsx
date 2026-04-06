@@ -13,6 +13,7 @@ import ExerciseLibrary from "./pages/ExerciseLibrary";
 import AIChat from "./pages/AIChat";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
+import PlanDetails from "./pages/PlanDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/workout/:id" element={<WorkoutView />} />
           <Route path="/exercises" element={<ExerciseLibrary />} />
+            <Route path="/plan/:id" element={<PlanDetails />} />
             <Route path="/chat" element={<AIChat />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/settings" element={<Settings />} />
