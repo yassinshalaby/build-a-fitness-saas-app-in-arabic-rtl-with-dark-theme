@@ -35,9 +35,9 @@ const ExerciseLibrary = () => {
   const { data: muscles, isLoading: musclesLoading } = useExerciseMuscles();
   const { data: exercises, isLoading } = useExternalExercises(selectedMuscle);
 
-  const filtered = exercises?.filter((e) =>
-    e.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filtered = exercises
+    ?.filter((e) => e.gif_url && e.gif_url.endsWith(".mp4"))
+    ?.filter((e) => e.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="min-h-screen bg-background pb-24">
