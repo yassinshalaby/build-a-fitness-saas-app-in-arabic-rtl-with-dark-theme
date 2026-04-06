@@ -104,30 +104,14 @@ const ExerciseLibrary = () => {
                 className="bg-card border border-border rounded-xl p-4 flex gap-4 items-center hover:border-primary/50 transition-all animate-fade-in"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
-                {exercise.gif_url ? (
-                  exercise.gif_url.endsWith(".mp4") ? (
-                    <video
-                      src={exercise.gif_url}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-16 h-16 rounded-lg object-cover bg-secondary shrink-0"
-                    />
-                  ) : (
-                    <img
-                      src={exercise.gif_url}
-                      alt={exercise.name}
-                      className="w-16 h-16 rounded-lg object-cover bg-secondary shrink-0"
-                      loading="lazy"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                  )
-                ) : (
-                  <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                    <Dumbbell className="w-6 h-6 text-muted-foreground" />
-                  </div>
-                )}
+                <video
+                  src={exercise.gif_url}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-16 h-16 rounded-lg object-cover bg-secondary shrink-0"
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-sm truncate">{exercise.name}</h3>
                   <div className="flex gap-2 mt-1">
