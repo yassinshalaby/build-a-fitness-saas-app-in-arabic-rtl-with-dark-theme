@@ -16,7 +16,7 @@ export const useExternalExercises = (muscle?: string, type?: string) => {
       let query = externalSupabase.from("saas_workouts").select("*");
       if (muscle) query = query.eq("muscle", muscle);
       if (type) query = query.eq("type", type);
-      const { data, error } = await query.limit(50);
+      const { data, error } = await query.limit(200);
       if (error) throw error;
       return data as ExternalExercise[];
     },
