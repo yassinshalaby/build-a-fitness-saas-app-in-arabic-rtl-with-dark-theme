@@ -1,4 +1,5 @@
 import { BottomNav } from "@/components/BottomNav";
+import { WorkoutPlans } from "@/components/WorkoutPlans";
 import { Flame, Dumbbell, Clock, TrendingUp, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -153,6 +154,9 @@ const Dashboard = () => {
           ))}
         </div>
       </div>
+
+      {/* Workout Plans */}
+      <WorkoutPlans />
 
       {/* Weekly Chart */}
       <div className="px-4 mt-8">
